@@ -27,7 +27,7 @@ SPA-приложение (аналог PowerPoint) на React/Redux/TypeScript �
 
 ```bash
 git clone https://github.com/exesakreda/presentation-maker
-cd app
+cd presentation-maker/app
 npm install
 npm run dev
 ```
