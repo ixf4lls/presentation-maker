@@ -1,9 +1,9 @@
-import { Store } from "redux";
+import { AnyAction, Store } from "redux";
 import { addNewAction, resetHistory } from "../actions/presentationActions";
 import { PresentationActionType } from "../types/presentationType";
 
 const createDispatch = (store: Store) => {
-    return (action: any) => {
+    return (action: AnyAction) => {
         // console.log(action)
         if (action.type == PresentationActionType.RESET_HISTORY) {
             store.dispatch(resetHistory())

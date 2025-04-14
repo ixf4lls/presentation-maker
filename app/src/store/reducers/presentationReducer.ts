@@ -1,6 +1,7 @@
 import { PresentationRecordState, PresentationState } from "../../../../types";
 import { PresentationActionType } from "../types/presentationType";
 import { uid } from 'uid';
+import { AnyAction } from 'redux';
 
 const initialState: PresentationState = {
     title: '',
@@ -23,7 +24,7 @@ const areStatesEqual = (state1: PresentationRecordState, state2: PresentationRec
     )
 }
 
-const presentationReducer = (state = initialState, action: any): PresentationState => {
+const presentationReducer = (state = initialState, action: AnyAction): PresentationState => {
     const currentState: PresentationRecordState = {
         title: state.title,
         slideList: state.slideList,

@@ -1,10 +1,11 @@
 import { Notification } from "../../../../types"
 import { NotificationActionType } from "../types/notificationType"
 import { uid } from 'uid'
+import { AnyAction } from 'redux'
 
 const initialState: Notification[] = []
 
-const notificationReducer = (state = initialState, action: any) => {
+const notificationReducer = (state = initialState, action: AnyAction) => {
     switch (action.type) {
         case NotificationActionType.ADD_NOTIFICATION: {
             const notification: Notification = {

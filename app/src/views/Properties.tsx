@@ -255,7 +255,7 @@ function SlideSelected() {
         const renderGradientColors = currentSlide.background.type == 'gradient'
             ? currentSlide.background.colors.sort((a, b) => {
                 return a.position - b.position
-            }).map((color, i) => {
+            }).map((_, i) => {
                 return (
                     <div
                         className={styles.color__gradient}
@@ -1060,4 +1060,4 @@ function Properties() {
 }
 
 
-export { Properties } 
+export { Properties }

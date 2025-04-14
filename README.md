@@ -30,6 +30,10 @@ SPA-приложение (аналог PowerPoint) на React/Redux/TypeScript �
 git clone https://github.com/exesakreda/presentation-maker
 cd presentation-maker/app
 npm install
+cp .env.example .env
+# укажите VITE_UNSPLASH_ACCESS_KEY в .env для поиска изображений
 npm run dev
 ```
 После запуска откройте адрес из консоли (например, http://localhost:5173).
+
+Поиск изображений использует Unsplash API. Ключ `VITE_UNSPLASH_ACCESS_KEY` встраивается в клиентский бандл, поэтому используйте отдельный ключ с ограничениями по домену и лимитам запросов. Не добавляйте `.env` в Git.

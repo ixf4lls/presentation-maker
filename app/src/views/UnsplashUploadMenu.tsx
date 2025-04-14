@@ -7,17 +7,24 @@ import { changeBackground, createImage } from '../store/actions/presentationActi
 import { getImageDimensions } from '../services/getImageDimensions'
 import { Loader } from './Loader'
 
+type UnsplashPhoto = {
+    id: string,
+    urls: {
+        full: string,
+        small: string,
+    },
+}
+
 type UnsplashUploadMenuProps = {
     currentSlideId: string,
     setUnsplashUploadActive: (unsplashUploadActive: boolean) => void,
     source: 'createImage' | 'changeBackground'
 }
 
-function UnsplashUploadMenu({ currentSlideId, setUnsplashUploadActive, source }: UnsplashUploadMenuProps) {
-    const unsplash = createApi({
-        accessKey: 'jLzOZgoR6tWSslxRpyixZHNLcAQHuNTSH8Mxjxy4_iM'
-    })
+const unsplashAccessKey = import.meta.env.VITE_UNSPLASH_ACCESS_KEY?.trim()
+const unsplash = unsplashAccessKey ? createApi({ accessKey: unsplashAccessKey }) : null
 
+function UnsplashUploadMenu({ currentSlideId, setUnsplashUploadActive, source }: UnsplashUploadMenuProps) {
     useEffect(() => {
         function handleClose(event: KeyboardEvent) {
             if (event.key === 'Escape') {
@@ -47,19 +54,29 @@ function UnsplashUploadMenu({ currentSlideId, setUnsplashUploadActive, source }:
     }
 
     const dispatch = createDispatch(store)
-    const [photos, setPhotos] = useState<any[]>([])
+    const [photos, setPhotos] = useState<UnsplashPhoto[]>([])
     const [page, setPage] = useState(1)
     const [query, setQuery] = useState<string>('')
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
     const imagesFromUnsplash = useCallback(async () => {
-        if (!query) return
+        if (!query) {
+            setPhotos([])
+            setError(null)
+            return
+        }
 
         setIsLoading(true)
         setError(null)
 
         try {
+            if (!unsplash) {
+                setError('Unsplash API key не настроен. Укажите VITE_UNSPLASH_ACCESS_KEY в app/.env')
+                setPhotos([])
+                return
+            }
+
             const result = await unsplash.search.getPhotos({
                 query,
                 page,
@@ -100,9 +117,8 @@ function UnsplashUploadMenu({ currentSlideId, setUnsplashUploadActive, source }:
                         className={styles.search__input}
                         defaultValue={query}
                         onBlur={(event) => {
-                            setQuery(event.target.value)
+                            setQuery(event.target.value.trim())
                             setPage(1)
-                            imagesFromUnsplash()
                         }}
                         onKeyDown={(e) => {
                             if (e.key === 'Enter') {
@@ -118,6 +134,7 @@ function UnsplashUploadMenu({ currentSlideId, setUnsplashUploadActive, source }:
                         display: query == '' ? 'none' : 'block'
                     }}
                 />
+                {error && <div className={styles.error} role='alert'>{error}</div>}
                 <div className={styles.menu__images}>
                     {isLoading
                         ? (

@@ -78,6 +78,12 @@
     margin-top: 8px;
 }
 
+.error {
+    color: #ff8f8f;
+    font: 500 12px 'Inter';
+    margin-top: 8px;
+}
+
 .images {
     width: 810px;
     padding: 24px;

@@ -1,6 +1,31 @@
 import { Slide } from "../../../types"
 
-declare const html2pdf: any
+type PdfOptions = {
+    margin: number,
+    filename: string,
+    image: { type: string, quality: number },
+    html2canvas: {
+        scale: number,
+        useCORS: boolean,
+        letterRendering: boolean,
+        logging: boolean,
+    },
+    jsPDF: {
+        unit: string,
+        format: number[],
+        orientation: string,
+    },
+}
+
+type Html2PdfWorker = {
+    set: (options: PdfOptions) => Html2PdfWorker,
+    from: (element: HTMLElement) => Html2PdfWorker,
+    output: (type: 'blob') => Promise<Blob>,
+}
+
+type Html2PdfFactory = () => Html2PdfWorker
+
+declare const html2pdf: Html2PdfFactory
 
 const createSlideHTML = (slide: Slide, isLast: boolean): HTMLDivElement => {
     const slideDiv = document.createElement('div')
@@ -11,7 +36,7 @@ const createSlideHTML = (slide: Slide, isLast: boolean): HTMLDivElement => {
     `
 
     switch (slide.background.type) {
-        case 'color':
+        case 'color': {
             const backgroundDiv = document.createElement('div')
             backgroundDiv.style.cssText = `
                 background-color: ${slide.background.value};
@@ -24,8 +49,9 @@ const createSlideHTML = (slide: Slide, isLast: boolean): HTMLDivElement => {
             `
             slideDiv.appendChild(backgroundDiv)
             break
+        }
 
-        case 'image':
+        case 'image': {
             const backgroundImg = document.createElement('img')
             backgroundImg.src = slide.background.src
             backgroundImg.style.cssText = `
@@ -39,8 +65,9 @@ const createSlideHTML = (slide: Slide, isLast: boolean): HTMLDivElement => {
             `
             slideDiv.appendChild(backgroundImg)
             break
+        }
 
-        case 'gradient':
+        case 'gradient': {
             const backgroundGradientDiv = document.createElement('div')
             const colors = slide.background.colors.map((color) => {
                 return `${color.color} ${color.position}%`
@@ -56,6 +83,7 @@ const createSlideHTML = (slide: Slide, isLast: boolean): HTMLDivElement => {
             `
             slideDiv.appendChild(backgroundGradientDiv)
             break
+        }
     }
 
     slide.objects.forEach(obj => {
@@ -97,7 +125,7 @@ const createSlideHTML = (slide: Slide, isLast: boolean): HTMLDivElement => {
     return slideDiv
 }
 
-export const generatePDF = async (slideList: Slide[], title: string) => {
+export const generatePDF = async (slideList: Slide[], title: string): Promise<Blob | null> => {
     try {
         const container = document.createElement('div')
         container.style.cssText = `
@@ -141,5 +169,6 @@ export const generatePDF = async (slideList: Slide[], title: string) => {
 
     } catch (error) {
         console.error('Ошибка при генерации PDF:', error)
+        return null
     }
 }
